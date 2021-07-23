@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+NUMBER_TO_LETTER = {
+  "1" => %W(),
+  "2" => %W(a b c),
+  "3" => %W(d e f),
+  "4" => %W(g h i),
+  "5" => %W(j k l),
+  "6" => %W(m n o),
+  "7" => %W(p q r s),
+  "8" => %W(t u v),
+  "9" => %W(w x y z),
+  "0" => %W()
+}
+
+dictionary = []
+possible_letters = []
+
+if ARGV.length < 2
+  puts "Missing arguments"
+elsif ARGV.length > 2
+  puts "Too Many arguments"
+else
+  dictionary_file_name = ARGV[0]
+
+  phone_number = ARGV[1].to_s.tr("-","")
+  if !File.file?(dictionary_file_name)
+    puts "Dictionary file not found"
+    exit
+  end
+  if phone_number.scan(/\D/).empty?
+    phone_number.split("").each do |c|
+      possible_letters << NUMBER_TO_LETTER[c]
+    end
+  end
+
+  File.foreach(dictionary_file_name) do |dictionary_word|
+    dictionary_word.strip!
+    if dictionary_word.length == possible_letters.length
+      dictionary << dictionary_word
+    end
+  end
+
+  possible_letters.each_with_index do |pl,index|
+    new_dictionary = []
+    dictionary.each do |dictionary_word|
+      if pl.include? dictionary_word[index]
+        new_dictionary << dictionary_word
+      end
+    end
+    dictionary = new_dictionary
+  end
+  puts dictionary
+end
